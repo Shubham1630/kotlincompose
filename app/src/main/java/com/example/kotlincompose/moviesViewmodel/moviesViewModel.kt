@@ -1,8 +1,9 @@
-package com.example.kotlincompose.network
+package com.example.kotlincompose.moviesViewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.kotlincompose.model.MovieApiResponse
 import com.example.kotlincompose.model.MovieResult
+import com.example.kotlincompose.network.NetworkService
 
 import com.google.gson.Gson
 
