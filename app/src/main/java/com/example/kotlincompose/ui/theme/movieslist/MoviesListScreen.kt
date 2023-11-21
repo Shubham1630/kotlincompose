@@ -1,5 +1,6 @@
 package com.example.kotlincompose.ui.theme.movieslist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,18 +26,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kotlincompose.model.MovieResult
 import com.example.kotlincompose.moviesViewmodel.MovieViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Composable
- fun MoviesListScreen(viewModel: MovieViewModel) {
+fun MoviesListScreen(onMovieItemClick: (String) -> Unit) {
     //    movies is a mutable state variable of type List<MovieResult>.
 //    By using mutableStateOf, you're telling Compose that movies is a
 //    value that can change over time. When the value of movies is updated,
 //    any UI elements that depend on movies will be automatically recomposed
 //    to reflect the changes
+    val viewModel: MovieViewModel = viewModel()
     var movies by remember { mutableStateOf<List<MovieResult>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -76,7 +79,7 @@ import kotlinx.coroutines.launch
             // Display movies in a LazyColumn
             LazyColumn {
                 items(movies) { movie ->
-                    MovieListItem(movie = movie)
+                    MovieListItem(movie = movie, onMovieItemClick)
                 }
             }
         }
@@ -88,11 +91,12 @@ import kotlinx.coroutines.launch
 }
 
 @Composable
-fun MovieListItem(movie: MovieResult) {
+fun MovieListItem(movie: MovieResult, onMovieItemClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onMovieItemClick("hello") },
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

@@ -22,8 +22,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.kotlincompose.model.MovieResult
 import com.example.kotlincompose.ui.theme.MoviesDetailsScreen
-import com.example.kotlincompose.ui.theme.moviesdetails.MoviesDetailsScreenScreen
+import com.example.kotlincompose.ui.theme.moviesdetails.MoviesDetailsScreen
+import com.example.kotlincompose.ui.theme.movieslist.MoviesListScreen
 
 
 @Composable
@@ -33,16 +35,28 @@ fun MoviesNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = MoviesDetailsScreen.route,
+        startDestination = com.example.kotlincompose.ui.theme.MoviesListScreen.route,
         modifier = modifier
     ) {
-        composable(route = MoviesDetailsScreen.route) {
-            MoviesDetailsScreenScreen()
+        composable(route = com.example.kotlincompose.ui.theme.MoviesListScreen.route) {
+            MoviesListScreen { movDetails ->
+                navController.navigateToMoviesDetailsScreen(movDetails.toString())
+            }
+        }
+        composable(
+            route = MoviesDetailsScreen.routeWithArgs,
+            arguments = MoviesDetailsScreen.arguments
+        ) { navBackStackEntry ->
+
+//            val movie =
+//                navBackStackEntry.arguments?.getParcelable<MovieResult>(MoviesDetailsScreen.detailScreenArg)
+                        val movie =
+                navBackStackEntry.arguments?.getString(MoviesDetailsScreen.detailScreenArg)
+            MoviesDetailsScreen(movie)
         }
 
     }
 }
-
 
 
 fun NavHostController.navigateSingleTopTo(route: String) =
@@ -62,4 +76,6 @@ fun NavHostController.navigateSingleTopTo(route: String) =
         restoreState = true
     }
 
-
+private fun NavHostController.navigateToMoviesDetailsScreen(movDetails: String) {
+    this.navigateSingleTopTo("${MoviesDetailsScreen.route}/$movDetails")
+}

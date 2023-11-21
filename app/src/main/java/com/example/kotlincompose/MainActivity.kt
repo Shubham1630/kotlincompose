@@ -27,6 +27,8 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+
 }
 
 // ViewModel to handle API calls
@@ -38,7 +40,9 @@ fun APICallScreen(viewModel: MovieViewModel = viewModel()) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
-    MoviesListScreen(viewModel)
+    // Use MoviesNavHost and pass the navController
+//    MoviesListScreen()
+    MoviesNavHost(navController = navController)
 }
 
 

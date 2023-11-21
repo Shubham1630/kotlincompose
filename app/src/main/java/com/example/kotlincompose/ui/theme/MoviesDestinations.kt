@@ -16,6 +16,10 @@
 
 package com.example.kotlincompose.ui.theme
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.kotlincompose.model.MovieResult
+
 interface MoviesDestination {
     val route: String
 }
@@ -23,10 +27,21 @@ interface MoviesDestination {
 /**
  * Rally app navigation destinations
  */
-object MoviesDetailsScreen : MoviesDestination {
-    override val route = "moviesDetailsScreen"
+object MoviesListScreen : MoviesDestination {
+    override val route = "moviesListScreen"
+
 }
 
-
+object MoviesDetailsScreen : MoviesDestination  {
+    override val route = "moviesDetailsScreen"
+    const val detailScreenArg = "movies_details"
+    val routeWithArgs = "$route/{$detailScreenArg}"
+//    val arguments = listOf(
+//        navArgument(detailScreenArg) { type = NavType.ParcelableType(MovieResult::class.java) }
+//    )
+    val arguments = listOf(
+        navArgument(detailScreenArg) { type = NavType.StringType }
+    )
+}
 
 
