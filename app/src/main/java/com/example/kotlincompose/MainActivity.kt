@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
 // Composable function for UI
 @Composable
-fun APICallScreen(viewModel: MovieViewModel = viewModel()) {
+fun APICallScreen() {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination

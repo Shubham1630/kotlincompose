@@ -33,7 +33,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MoviesListScreen(onMovieItemClick: (String) -> Unit) {
+fun MoviesListScreen(onMovieItemClick: (MovieResult) -> Unit) {
     //    movies is a mutable state variable of type List<MovieResult>.
 //    By using mutableStateOf, you're telling Compose that movies is a
 //    value that can change over time. When the value of movies is updated,
@@ -91,12 +91,12 @@ fun MoviesListScreen(onMovieItemClick: (String) -> Unit) {
 }
 
 @Composable
-fun MovieListItem(movie: MovieResult, onMovieItemClick: (String) -> Unit) {
+fun MovieListItem(movie: MovieResult, onMovieItemClick: (MovieResult) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { onMovieItemClick("hello") },
+            .clickable { onMovieItemClick(movie) },
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

@@ -14,8 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlincompose.model.MovieResult
 
+
 @Composable
-fun MoviesDetailsScreen(movie: String?) {
+fun MoviesDetailsScreen(movie: MovieResult?) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -26,7 +27,7 @@ fun MoviesDetailsScreen(movie: String?) {
         ) {
             // Display Movie Title
             Text(
-                text = movie ?: "",
+                text = movie?.title ?: "",
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                 modifier = Modifier.padding(bottom = 4.dp)
             )

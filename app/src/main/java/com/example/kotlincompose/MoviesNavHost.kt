@@ -26,6 +26,7 @@ import com.example.kotlincompose.model.MovieResult
 import com.example.kotlincompose.ui.theme.MoviesDetailsScreen
 import com.example.kotlincompose.ui.theme.moviesdetails.MoviesDetailsScreen
 import com.example.kotlincompose.ui.theme.movieslist.MoviesListScreen
+import com.google.gson.Gson
 
 
 @Composable
@@ -40,7 +41,7 @@ fun MoviesNavHost(
     ) {
         composable(route = com.example.kotlincompose.ui.theme.MoviesListScreen.route) {
             MoviesListScreen { movDetails ->
-                navController.navigateToMoviesDetailsScreen(movDetails.toString())
+                navController.navigateToMoviesDetailsScreen(Gson().toJson(movDetails))
             }
         }
         composable(
@@ -52,7 +53,8 @@ fun MoviesNavHost(
 //                navBackStackEntry.arguments?.getParcelable<MovieResult>(MoviesDetailsScreen.detailScreenArg)
                         val movie =
                 navBackStackEntry.arguments?.getString(MoviesDetailsScreen.detailScreenArg)
-            MoviesDetailsScreen(movie)
+            val movieObject = Gson().fromJson(movie, MovieResult::class.java)
+            MoviesDetailsScreen(movieObject)
         }
 
     }
