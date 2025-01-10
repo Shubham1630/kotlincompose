@@ -1,0 +1,41 @@
+name: Add Dependencies to Dependency Graph
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  submit-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Java and Gradle
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17' # Replace with your project's Java version
+          distribution: 'temurin'
+
+      # Step 3: Analyze Gradle dependencies
+      - name: Analyze Dependencies
+        id: analyze-dependencies
+        run: |
+          ./gradlew dependencies --configuration runtimeClasspath > dependencies.txt
+          cat dependencies.txt
+
+      # Step 4: Submit dependencies to GitHub
+      - name: Submit Dependencies
+        uses: advanced-security/dependency-submission-action@v1
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          job-correlator: ${{ github.run_id }}
+          dependencies: dependencies.txt
