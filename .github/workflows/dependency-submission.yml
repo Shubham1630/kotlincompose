@@ -24,27 +24,28 @@ jobs:
           java-version: '17' # Replace with your project's Java version
           distribution: 'temurin'
 
-      # Step 3: Analyze Gradle dependencies
-      - name: Analyze Dependencies
-        id: analyze-dependencies
-        run: |
-          ./gradlew dependencies --configuration runtimeClasspath > dependencies.txt
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.5 # Replace with the version compatible with your project
 
-      # Step 4: Convert dependencies to a simple SBOM-like JSON file
+      # Step 3: Install CycloneDX Gradle Plugin
+      - name: Add CycloneDX Gradle Plugin
+        run: |
+          echo "plugins { id 'org.cyclonedx.bom' version '1.7.4' }" >> build.gradle
+
+      # Step 4: Generate the SBOM
       - name: Generate SBOM
         run: |
-          echo '{ "dependencies": [' > sbom.json
-          grep -E '\---|\\---' dependencies.txt | awk '{print "{\"name\": \"" $1 "\", \"version\": \"unknown\"},"}' >> sbom.json
-          sed -i '$ s/,$//' sbom.json # Remove the trailing comma
-          echo ']}' >> sbom.json
-          cat sbom.json
+          ./gradlew cyclonedxBom
+          ls build/reports/bom/ # Verify SBOM generation
 
-      # Step 5: Upload the SBOM as an artifact (optional)
+      # Step 5: Upload SBOM as an artifact (optional)
       - name: Upload SBOM
         uses: actions/upload-artifact@v3
         with:
           name: sbom
-          path: sbom.json
+          path: build/reports/bom/*.json
 
       # Step 6: Submit dependencies to GitHub Dependency Graph
       - name: Submit Dependencies
@@ -53,4 +54,4 @@ jobs:
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
           job-correlator: ${{ github.run_id }}
-          dependencies: sbom.json
+          manifest: build/reports/bom/bom.json
