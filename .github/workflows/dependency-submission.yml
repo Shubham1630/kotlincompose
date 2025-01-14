@@ -1,4 +1,4 @@
-name: Add Dependencies to Dependency Graph
+name: Generate SBOM and Submit to Dependency Graph
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  submit-dependencies:
+  generate-sbom:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,13 +29,28 @@ jobs:
         id: analyze-dependencies
         run: |
           ./gradlew dependencies --configuration runtimeClasspath > dependencies.txt
-          cat dependencies.txt
 
-      # Step 4: Submit dependencies to GitHub
+      # Step 4: Convert dependencies to a simple SBOM-like JSON file
+      - name: Generate SBOM
+        run: |
+          echo '{ "dependencies": [' > sbom.json
+          grep -E '\---|\\---' dependencies.txt | awk '{print "{\"name\": \"" $1 "\", \"version\": \"unknown\"},"}' >> sbom.json
+          sed -i '$ s/,$//' sbom.json # Remove the trailing comma
+          echo ']}' >> sbom.json
+          cat sbom.json
+
+      # Step 5: Upload the SBOM as an artifact (optional)
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: sbom.json
+
+      # Step 6: Submit dependencies to GitHub Dependency Graph
       - name: Submit Dependencies
         uses: advanced-security/dependency-submission-action@v1
         with:
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
           job-correlator: ${{ github.run_id }}
-          dependencies: dependencies.txt
+          dependencies: sbom.json
